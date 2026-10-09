@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Milênio Embalagens - Sistema de Produção</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/chatbot.css">
+    <link rel="stylesheet" href="assets/css/tutorial.css">
+</head>
+
+<body>
+    <div id="login" class="mod" style="display:none;background:var(--bg)"></div>
+    <div class="app" id="app" style="display:none">
+        <aside>
+            <div class="brand">MILÊNIO EMBALAGENS<span>SISTEMA DE PRODUÇÃO</span></div>
+            <nav id="nav"></nav>
+            <div class="cfgbar"><a id="cfg" href="#config">Configurações</a></div>
+            <div class="foot">Setor: <b id="setor"></b> <button id="sair" style="float:right;padding:2px 10px;font-size:12px">Sair</button></div>
+        </aside>
+        <main>
+            <div class="top"><button id="tg">Menu</button>
+                <div>
+                    <h1 id="ttl"></h1>
+                    <div class="sub" id="sub"></div>
+                </div>
+                <div class="sp"></div>
+                <button id="tutb" title="Abrir o tutorial desta conta">Tutorial</button>
+                <button id="qrb">Ler QR Code</button>
+                <div class="sub" id="clk"></div>
+            </div>
+            <div id="alerts"></div>
+            <div id="view"></div>
+        </main>
+    </div>
+    <!-- Assistente Milênio (chatbot) - só aparece depois do login -->
+    <div class="chatbot-container minimized" id="chatbot-container" hidden>
+        <div class="chatbot-header" id="chatbot-header">
+            <svg class="chatbot-icon-mini" width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="white" stroke-width="2" aria-hidden="true">
+                <rect x="4" y="4" width="24" height="24" rx="4" ry="4" />
+                <text x="16" y="21" font-size="12" font-weight="bold" text-anchor="middle" fill="white" stroke="none" font-family="Arial">IA</text>
+            </svg>
+            <div class="chatbot-title chatbot-title-text"><span id="cb-ic-bot"></span>Assistente Milênio<span class="voice-status" id="voice-status"></span></div>
+            <div class="chatbot-header-actions">
+                <button type="button" id="cb-clear" title="Limpar conversa" aria-label="Limpar conversa"></button>
+                <button type="button" id="cb-min" title="Minimizar" aria-label="Minimizar"></button>
+            </div>
+        </div>
+        <div class="chatbot-messages" id="chatbot-messages" role="log" aria-live="polite"></div>
+        <div class="chatbot-suggestions" id="cb-chips"></div>
+        <div class="chatbot-input-area">
+            <button type="button" class="voice-btn" id="voice-btn" title="Clique para falar" aria-label="Falar"><span id="mic-icon"></span></button>
+            <input type="text" id="chatbot-input" class="chatbot-input" placeholder="Digite ou use o microfone..." autocomplete="off" maxlength="400">
+            <button type="button" class="chatbot-send-btn" id="chatbot-send" title="Enviar" aria-label="Enviar"></button>
+        </div>
+        <div class="chatbot-footer">
+            <label class="voice-toggle"><input type="checkbox" id="voice-response-toggle"><span>Resposta por voz</span></label>
+            <small id="cb-mode">Milênio IA</small>
+        </div>
+    </div>
+    <!-- VLibras (tradutor para Libras do governo federal): precisa de internet; sem internet o botão simplesmente não aparece -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js" defer onload="try{new window.VLibras.Widget('https://vlibras.gov.br/app')}catch(e){}"></script>
+    <script src="assets/js/qr-code-styling.js"></script>
+    <script src="assets/js/jsQR.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/ficha-producao.js"></script>
+    <script src="assets/js/chatbot.js"></script>
+    <script src="assets/js/tutorial.js"></script>
+</body>
+
+</html>

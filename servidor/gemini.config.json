@@ -1,0 +1,7 @@
+{
+  "apiKey": "COLE_AQUI_SUA_CHAVE_DO_GEMINI",
+  "model": "gemini-3.8-flash",
+  "raciocinio": "low",
+  "limiteMinuto": 12,
+  "limiteDia": 500
+}

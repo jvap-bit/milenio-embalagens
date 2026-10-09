@@ -1,0 +1,34 @@
+/* Tutorial guiado (tutorial.js). Fica acima do assistente (15) e dos modais (20); abaixo dos avisos (99). */
+.tut { position: fixed; inset: 0; z-index: 90 }
+.tut::before { content: ""; position: absolute; inset: 0 }               /* bloqueia cliques na tela durante o tutorial */
+.tut.sem { background: rgba(7, 26, 53, .6) }
+.tut-hl { position: fixed; border-radius: 10px; border: 3px solid var(--ac); box-shadow: 0 0 0 9999px rgba(7, 26, 53, .6); pointer-events: none; transition: all .25s ease }
+.tut.sem .tut-hl { display: none }
+.tut-card, .tut-wcard { background: var(--card); color: var(--ink); border: 2px solid var(--edge); border-radius: 14px; box-shadow: 0 10px 40px rgba(0, 0, 0, .4) }
+.tut-card { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); width: min(560px, calc(100vw - 24px)); max-height: 46vh; display: flex; flex-direction: column; padding: 14px 16px }
+.tut-card.alto { bottom: auto; top: 12px }
+.tut.sem .tut-card { top: 50%; bottom: auto; transform: translate(-50%, -50%); max-height: 80vh }
+.tut-top { display: flex; align-items: center; justify-content: space-between }
+.tut-cnt { font-size: .8125rem; color: var(--mut); font-weight: 600 }
+.tut-x { padding: 0 10px; font-size: 1.4rem; line-height: 1.3 }
+.tut-bar { height: 5px; background: var(--line); border-radius: 3px; margin: 6px 0 10px; overflow: hidden }
+.tut-bar div { height: 100%; background: var(--ac); transition: width .25s }
+.tut-card h3, .tut-wcard h3 { margin: 0 0 6px; font-size: 1.1rem }
+.tut-body { overflow: auto; font-size: .9rem; min-height: 0; flex: 1 }
+.tut-body p { margin: 0 0 8px }
+.tut-body ul { margin: 0 0 8px; padding-left: 20px }
+.tut-body li { margin-bottom: 4px }
+.tut-dica { background: var(--newbg); border-left: 4px solid var(--ac); padding: 6px 10px; border-radius: 6px }
+.tut-nav { display: flex; align-items: center; gap: 8px; margin-top: 12px; flex-wrap: wrap }
+.tut-nav .sp { flex: 1 }
+.tut-link { background: none; border: 0; color: var(--blue); text-decoration: underline; padding: 6px 4px }
+.tut-wel { position: fixed; inset: 0; z-index: 90; background: rgba(7, 26, 53, .6); display: flex; align-items: center; justify-content: center; padding: 16px }
+.tut-wcard { max-width: 440px; width: 100%; padding: 20px }
+.tut-wcard small { display: block; margin-top: 12px; color: var(--mut) }
+.tut-chk { display: flex; gap: 8px; align-items: center; margin: 6px 0; cursor: pointer }
+.tut-chk input { width: auto }
+@media (max-width: 600px) { .tut-card { max-height: 52vh; padding: 12px } .tut-body { font-size: .875rem } }
+@media print { .tut, .tut-wel { display: none !important } }
+
+/* VLibras: some na impressão e fica abaixo do tutorial */
+@media print { [vw] { display: none !important } }

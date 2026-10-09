@@ -1,0 +1,6 @@
+# Tokens dos ESP32. Guarde com cuidado: quem tem o token consegue gravar dados desta máquina.
+# Cada ESP32 usa o token da sua linha (campo TOKEN_DISPOSITIVO no firmware).
+esp32-01 | maquina 01 | Flexográfica 01 | token: mil_b7ce8fc2bc4c890f2306af81b6a127e48f0d586f
+esp32-02 | maquina 02 | Corte e Vinco 02 | token: mil_025849995f2d3d2cc9e383634ebb4cb44cab1b97
+esp32-03 | maquina 03 | Colagem 03 | token: mil_00a3ef99761f96caf27fa7772fde1d894d525378
+esp32-04 | maquina 04 | Corte e Vinco 04 | token: mil_ba51ecb51033c8c941a2df4e980248a42e5b6d85

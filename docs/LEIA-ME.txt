@@ -1,0 +1,167 @@
+ESTRUTURA DE PASTAS
+  index.html              única página na raiz: abra este arquivo (ou o endereço do servidor)
+  assets/css/             style.css, chatbot.css, tutorial.css
+  assets/js/              app.js, chatbot.js, tutorial.js e as bibliotecas jsQR.js e qr-code-styling.js
+  paginas/ficha.html      ficha aberta pelo QR Code
+  servidor/               server.js, db.js (banco), iniciar.bat, iniciar.sh, gemini.config.exemplo.json
+                          banco/ (schema.sql, manutencao.js, consultas_exemplo.sql)
+                          (e, quando criados: dados/ com o banco milenio.db, certificado/ e gemini.config.json)
+  esp32/milenio_contador/ firmware do ESP32 (milenio_contador.ino e config.h)
+  docs/                   LEIA-ME.txt (este arquivo), ESP32.md (como ligar o ESP32), BANCO.md (tabelas do banco)
+- Se você já tinha a pasta "dados" da versão anterior, copie-a para dentro de "servidor": mensagens.json e fichas.json são importados para o banco na primeira vez.
+- Se você já tinha gemini.config.json ou "certificado", copie-os para dentro de "servidor".
+- QR Codes impressos antes desta organização continuam funcionando.
+
+COMO USAR A COMUNICAÇÃO ENTRE SETORES
+
+1) Escolha UM computador para ser o servidor (precisa do Node.js instalado: nodejs.org).
+2) Nele, abra a pasta "servidor" e dê duplo clique em iniciar.bat (Windows) ou rode ./iniciar.sh (Linux/Mac).
+3) A janela mostrará os endereços, por exemplo:  http://192.168.0.10:3000
+4) Em cada computador/tablet/celular dos setores (na mesma rede Wi-Fi/cabo),
+   abra esse endereço no navegador, escolha o setor e entre com a senha.
+5) Mensagens, fichas, máquinas, OPs, produção, paradas e refugos ficam no banco servidor/dados/milenio.db e aparecem para todos em até 2 segundos.
+
+Observações
+- O servidor precisa ficar ligado. Se a porta 3000 estiver ocupada: PORT=3100 node servidor/server.js
+- Se o Windows perguntar sobre o Firewall, permita o acesso em rede privada.
+- Abrir o index.html direto (sem servidor) funciona em "modo local": as mensagens ficam só naquele computador.
+
+QR CODE DE MÁQUINAS E OPs
+- Em Máquinas e em Ordens de Produção há o botão "QR Code": mostra a ficha com os dados cadastrados e a etiqueta
+  para imprimir ("Imprimir etiqueta").
+- Em qualquer tela, o botão "Ler QR Code" (barra superior) lê por foto do QR Code ou por código digitado
+  (também serve para leitor de código de barras/QR USB: clique no campo e leia).
+- O botão "Ler QR Code" não usa mais a câmera ao vivo: use "Tirar foto do QR Code" (funciona sem HTTPS) ou digite/leia o código no campo.
+- HTTPS no servidor (opcional, só para o botão "Compartilhar / Notas" da ficha): crie a pasta "servidor/certificado" com key.pem e cert.pem. Exemplo (troque o IP):
+     openssl req -x509 -newkey rsa:2048 -nodes -keyout certificado/key.pem -out certificado/cert.pem -days 825 -subj "/CN=milenio" -addext "subjectAltName=IP:192.168.0.10"
+     Depois reinicie o servidor e acesse por https://... (o navegador avisa uma vez que o certificado é próprio; aceite).
+- O QR guarda um link para a "ficha" (paginas/ficha.html) do servidor, com os dados da máquina/OP no momento em que o QR foi gerado.
+  Ao escanear com a câmera do celular/tablet, o navegador abre a ficha (sem login). Nela há "Copiar dados" e, em HTTPS, "Compartilhar / Notas".
+- O celular precisa estar na mesma rede do servidor. Abra o sistema pelo endereço de rede (ex.: http://192.168.0.10:3000); se abrir por
+  localhost, o sistema usa sozinho o IP de rede do servidor no QR. Sem servidor (index.html direto), o QR traz a ficha em texto.
+- QR Codes antigos (texto ou link) continuam sendo lidos pelo botão "Ler QR Code".
+
+Bibliotecas incluídas (funcionam sem internet): qr-code-styling 1.9.2 (MIT, Denys Kozak; QR Codes com estilo do gerador url.gratis) e jsQR 1.4.0 (Apache-2.0, Cozmo).
+
+ALERTAS DE PARADA PROLONGADA E BAIXA PRODUÇÃO
+- Aparecem numa faixa no topo de qualquer tela (e como aviso no canto) só quando há problema. Sem problema, não aparece nada.
+- Visíveis para Produção, Manutenção, Planejamento (PCP) e Administrativo.
+- Limites em Configurações > Alertas: parada prolongada (padrão 15 min) e baixa produção (padrão: abaixo de 70% do ritmo nominal).
+- A baixa produção só é avaliada depois que a máquina está produzindo há 3 minutos, para não dar alarme falso na partida.
+
+PLANEJADO X PRODUZIDO
+- Cada OP mostra a barra de progresso com: quantidade produzida, meta (quantidade planejada), percentual e quanto falta
+  (ou "Meta atingida"). Aparece em Ordens de Produção, Indicadores, telas iniciais dos setores e cartões de máquina.
+
+MODELOS DE CAIXA (CORTE E VINCO)
+- Em Desenhos Técnicos há o card "Corte e Vinco", que abre com a caixa Padrão (Pequena, Média, Grande ou Personalizado). O botão "Modelos" abre a seleção das outras caixas: Correios/Sedex, Envelope, Telescópica (fundo semi-automático) e Maleta.
+- Na janela do botão "Modelos" escolha o tipo, o tamanho (Pequena, Média, Grande) ou "Personalizado" (C x L x A em mm).
+- Corte = linha contínua; vinco = linha tracejada. Os desenhos são gerados pelas medidas e servem de referência: confirme com a ferramentaria antes de produzir.
+
+CAIXA PALETE
+- Em Desenhos Técnicos, abaixo do card "Corte e Vinco", há o card "Caixa Palete": sem modelos, só é possível alterar
+  Comprimento e Altura (mm). A largura é fixa em 1000 mm (constante PAL.L em assets/js/app.js).
+- O desenho mostra a chapa (aba de cola + painéis C, L, C, L) e as duas peças de tampa e fundo, com corte contínuo e vinco tracejado.
+- A lista de cards de produtos (Caixa Grande, Média, Pequena, Embalagem A) foi removida da tela de Desenhos Técnicos.
+
+IMPRIMIR OP EM PDF
+- Em Ordens de Produção, cada linha tem o botão "PDF": abre a folha da OP (dados, QR Code e desenho técnico) e já chama a impressão.
+- Na janela de impressão, escolha "Salvar como PDF" como destino. Se precisar de novo, use "Imprimir / Salvar PDF" na folha.
+
+EXCLUIR OP (PCP)
+- Em Ordens de Produção, cada linha tem o botão "Excluir" (aparece só para Planejamento (PCP) e Administrativo).
+- Pede confirmação antes de apagar. Se a OP estava ligada a uma máquina, a máquina fica sem OP (e "Disponível" se estava produzindo).
+
+OPs DE EXEMPLO
+- Os produtos/OPs de exemplo agora usam os nomes dos modelos de caixa do desenho: Padrão (abas se encontram), Correios / Sedex,
+  Envelope, Telescópica (fundo semi-automático) e Maleta (com alça). O desenho da OP (botão "Abrir") mostra o modelo correspondente.
+- Dados de exemplo antigos já salvos no navegador (Caixa Grande/Média/Pequena, Embalagem A) são convertidos automaticamente.
+
+PRIORIDADE DAS OPs
+- Cada OP tem uma prioridade: Urgente, Alta, Normal ou Baixa (padrão: Normal). Escolha ao criar a OP em "Nova OP".
+- Planejamento (PCP) e Administrativo podem mudar a prioridade a qualquer momento, direto na lista de Ordens de Produção (campo colorido
+  na coluna Prioridade) ou em "Abrir". Os demais setores só visualizam.
+- A lista de OPs fica ordenada por prioridade (Urgente primeiro) e, em empate, pelo prazo mais curto. OPs finalizadas vão para o fim.
+  Há um filtro por prioridade no topo da lista. Urgentes e Altas ganham uma marca colorida na lateral da linha.
+- Fila por máquina: quando uma OP termina, a máquina passa sozinha para a OP planejada de maior prioridade (em empate, a de prazo mais curto).
+  Uma OP já em produção nunca é interrompida por mudança de prioridade; a nova ordem vale a partir da próxima.
+- Em Planejamento há o quadro "Fila de produção por máquina" e o indicador "Urgentes em aberto".
+- A prioridade aparece nos cartões de máquina, na tela do Operador (com a próxima OP da fila), no PDF da OP e na ficha do QR Code
+  (QR Codes antigos continuam funcionando, só não mostram a prioridade).
+- OPs salvas antes desta versão são convertidas automaticamente para prioridade Normal.
+
+PESQUISA NA TELA DE MÁQUINAS
+- Em Máquinas há um campo de pesquisa: digite o ID (ex.: 02), parte do nome (ex.: flexo) ou o número da OP. A lista mostra só as máquinas que combinam
+  (não diferencia maiúsculas nem acentos). O botão "Limpar" volta a mostrar todas.
+- Quando sobra uma única máquina (ou ao clicar em "Ver dados" na linha), aparecem só os dados dela: status, produzido hoje, OEE (8h), OP atual,
+  fila de OPs por prioridade, produção por hora, últimas paradas e últimos refugos.
+
+ASSISTENTE MILÊNIO (CHATBOT COM VOZ E GEMINI)
+- Aparece como uma bolinha "IA" no canto inferior direito, depois do login. Clique para abrir; "Limpar conversa" e "Minimizar" ficam no topo.
+- Responde sobre máquinas, paradas, alertas, OPs (prioridade, prazo, atrasadas), OEE, produção de hoje, refugo, mensagens não lidas e como usar o sistema.
+  Funciona por texto ou voz (microfone; o reconhecimento de voz do navegador pede internet e, em alguns navegadores, HTTPS ou localhost).
+  Ligue "Resposta por voz" no rodapé para ele falar as respostas.
+- SEM Gemini (padrão): responde sozinho com os dados do sistema, sem internet. O rodapé mostra "modo local".
+- COM Gemini: respostas mais livres, com conversa em contexto. Para ligar:
+    1) Gere uma chave em https://aistudio.google.com/apikey
+    2) Copie gemini.config.exemplo.json para gemini.config.json (dentro da pasta servidor, ao lado do server.js) e cole a chave em "apiKey".
+       (Ou defina a variável de ambiente GEMINI_API_KEY antes de iniciar.)
+    3) Reinicie o servidor. A janela mostrará "Assistente IA (Gemini): ligado". Rodapé do chat: "Milênio IA · Gemini".
+  - A chave fica só no servidor (nunca vai para o navegador). Não compartilhe o gemini.config.json.
+  - O modelo padrão é gemini-3.8-flash (campo "model"). "raciocinio": low | medium | high (low = mais rápido).
+  - O servidor precisa de internet para falar com o Gemini. Se cair, o assistente volta sozinho para as respostas locais.
+  - Limites: "limiteMinuto" (por computador) e "limiteDia" (total) evitam consumo excessivo da cota.
+  - Abrindo o index.html direto (sem servidor) o assistente funciona em modo local.
+- Privacidade: a cada pergunta o servidor envia ao Gemini um resumo das máquinas, OPs, paradas, refugo e alertas (para ele responder
+  com dados reais). Senhas e mensagens entre setores NUNCA são enviadas. O assistente só consulta; não altera nada no sistema.
+- Para ajustar a personalidade/regras do Gemini: edite PROMPT_BASE em servidor/server.js.
+
+TUTORIAL GUIADO POR CONTA
+- Depois do login, abre uma janela perguntando se você quer seguir o tutorial ("Iniciar tutorial") ou fechar ("Agora não").
+  Marque "Não mostrar ao entrar" para ele não abrir sozinho naquela conta neste navegador.
+- O botão "Tutorial" na barra superior abre o guia a qualquer momento.
+- Em cada passo: Voltar, Próximo, Pular tutorial (vai ao último passo), X ou Esc para fechar. Teclado: setas e Enter.
+- Cada conta (Produção, Manutenção, Qualidade, PCP, Expedição, Administrativo) tem passos próprios: o que aparece ao entrar,
+  o significado dos dados (indicadores, status, prioridade, OEE) e para que servem os botões. O tutorial só lê a tela, não altera dados.
+- Para editar os textos: arquivo assets/js/tutorial.js (lista PASSOS). Aparência: assets/css/tutorial.css.
+
+VLIBRAS (LIBRAS)
+- O ícone das mãos na lateral direita ativa o tradutor VLibras (governo federal), na tela de login e em todas as contas.
+- Precisa de internet (carrega de vlibras.gov.br). Sem internet o ícone não aparece e o resto do sistema funciona normalmente.
+- Há um passo sobre ele no tutorial (arquivo assets/js/tutorial.js).
+
+FICHA DE PRODUÇÃO (substitui o preenchimento à mão da Ordem de Fabricação)
+- Menu "Ficha de Produção" para Produção, Qualidade, Expedição, Planejamento (PCP) e Administrativo. Código: assets/js/ficha-producao.js
+- Operador (Produção): escolhe a máquina e a OP. A ficha muda conforme a máquina (detectada pelo nome cadastrado):
+    Riscador / Impressora (Flexográfica) / Corte e Vinco / Amarração-Colagem: tempos, perdas e quantidade.
+    Amarração-Colagem também pede Volumes e Peças por volume.
+- Tempos: botões "1. Iniciar ajuste", "2. Iniciar produção", "3. Finalizar produção" gravam a hora. Dá para corrigir a hora no campo.
+  O sistema calcula tempo de ajuste, de produção e total e compara com o previsto da OF (vermelho/laranja se passou).
+  "Tempos previstos" (T. ajuste / T. prod. da OF impressa) são opcionais, ficam numa seção recolhida.
+- Perdas: perda no ajuste, perda na produção e quantidade produzida (campos "Perda aj.", "Perda prod." e "Qtde prod." da folha).
+- Qualidade preenche "Inspeção final" e Expedição preenche "Faturamento" (volumes, peças/volume, excedente, total de caixas e NF Nº).
+  Administrativo preenche todas.
+- "Enviar ao responsável": escolha o setor (padrão: Planejamento PCP). A ficha vai para o servidor e o responsável também recebe uma
+  mensagem na Comunicação. Em "Recebidas" ele vê tudo e clica em Aprovar ou Devolver (com motivo). Quem enviou recebe aviso.
+  Fichas devolvidas aparecem em "Enviadas por mim" com o botão "Corrigir e reenviar" (a nova ficha substitui a anterior).
+- "Baixar planilha (CSV)" em Recebidas exporta as fichas para Excel.
+- O rascunho fica salvo no aparelho: se a tela fechar, os dados preenchidos continuam lá.
+- As fichas enviadas ficam no banco (servidor/dados/milenio.db). Faça backup da pasta servidor/dados ou use: node banco/manutencao.js backup
+- Sem servidor (index.html direto): funciona em modo local, só naquele navegador - o responsável NÃO recebe. Use o servidor.
+- Tipos de máquina: se o nome de uma máquina nova não tiver as palavras riscador, flexo/impressora, corte/vinco, cola/amarr,
+  ela usa a ficha genérica. Para ajustar, edite faseDe() e FASES no começo de ficha-producao.js.
+- Tutorial: cada conta que usa a ficha ganhou passos sobre ela no botão "Tutorial" (máquina e OP, botões de hora, tempos, perdas, envio,
+  análise das recebidas e acompanhamento das enviadas). Os textos ficam em tutorial.js (objeto F, dentro de "Ficha de Produção").
+
+BANCO DE DADOS (SQLite) E ESP32  -  versão 3.8
+- Requer Node.js 22.5 ou superior (node -v). Em Node mais antigo o sistema abre como antes (arquivos JSON), mas sem banco e sem ESP32;
+  a janela do servidor avisa.
+- O banco servidor/dados/milenio.db é criado sozinho na primeira vez. Nada para instalar.
+- Antes, máquinas, OPs, produção, paradas e refugos ficavam só no navegador de cada computador. Agora ficam no banco e todos os setores
+  veem os mesmos dados. Na primeira abertura, os dados que já estavam no navegador são enviados ao banco (uma vez, no lugar do exemplo).
+- Cada máquina ganha um ESP32 e um token (servidor/dados/esp32_tokens.txt). Passo a passo de ligação, firmware, esquema elétrico do sensor,
+  calibração e API: docs/ESP32.md. Tabelas e consultas: docs/BANCO.md.
+- Tela Integração IoT (Administrativo): lista dos ESP32 (online/offline) e botão "Limpar dados simulados", para usar quando ligar os ESP32 de verdade.
+- Com o servidor ligado o simulador de sensores roda no servidor (máquinas com ESP32 online não são simuladas).
+- Sem servidor (index.html direto) continua o modo local, só naquele navegador.
+- Comandos de manutenção (calibrar sensor, novo token, backup, renomear máquina): node banco/manutencao.js (dentro da pasta servidor).
